@@ -3,4 +3,3 @@ streamlit
 plotly
 numpy
 scipy
-base64
