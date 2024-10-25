@@ -29,11 +29,8 @@ To run this app, you will need Python and the following libraries:
 
 You can install the required libraries using pip:
 
-```bash
-bash
-Copy code
+```
 pip install pandas streamlit plotly numpy scipy
-
 ```
 
 ## Usage
@@ -42,11 +39,8 @@ pip install pandas streamlit plotly numpy scipy
 2. Navigate to the directory containing the script.
 3. Run the Streamlit app:
     
-    ```bash
-    bash
-    Copy code
+    ```
     streamlit run your_script_name.py
-    
     ```
     
 4. Open your web browser and go to `http://localhost:8501`.
