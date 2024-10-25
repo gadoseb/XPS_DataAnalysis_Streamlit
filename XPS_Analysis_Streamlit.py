@@ -63,6 +63,8 @@ def main():
             fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample], mode='lines', name='Original Data'))
             st.plotly_chart(fig)
 
+            st.subheader("Slice the Data")
+
             # Slicing data according to binding energy range
             energy_min = float(binding_energy.min())
             energy_max = float(binding_energy.max())
@@ -76,7 +78,7 @@ def main():
                 # Plot the selected range
                 fig = go.FigureWidget()
                 fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Selected Range'))
-                st.subheader("Sliced Data")
+                
                 st.plotly_chart(fig)
 
                 # Allow the user to select both peak range and center
