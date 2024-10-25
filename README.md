@@ -1,1 +1,78 @@
-# XPS_DataAnalysis_Streamlit
+# Streamlit App - XPS Data Analysis with Multiple Gaussian Fitting
+
+## Overview
+
+This Streamlit app provides a user-friendly interface for analyzing X-ray Photoelectron Spectroscopy (XPS) data. It allows users to upload Excel files containing binding energy and intensity data, perform Gaussian fitting on selected samples, and visualize the results. Additionally, it offers functionality for background subtraction using the Tougaard method.
+
+## Features
+
+- **Upload Excel Files**: Users can upload Excel files containing XPS data.
+- **Select Sheets**: Choose from multiple sheets within the uploaded Excel file.
+- **Individual Sample Analysis**: Perform Gaussian fitting on a selected sample with the option to customize peak parameters.
+- **Overlay of All Samples**: Visualize the intensity data of all samples on a single plot.
+- **Background Subtraction**: Apply Tougaard background correction to enhance fitting accuracy.
+- **Download Results**: Users can download fitted data as a CSV file for further analysis.
+
+## Installation
+
+To run this app, you will need Python and the following libraries:
+
+- `pandas`
+- `streamlit`
+- `plotly`
+- `numpy`
+- `scipy`
+
+You can install the required libraries using pip:
+
+```bash
+bash
+Copy code
+pip install pandas streamlit plotly numpy scipy
+
+```
+
+## Usage
+
+1. Clone or download this repository.
+2. Navigate to the directory containing the script.
+3. Run the Streamlit app:
+    
+    ```bash
+    bash
+    Copy code
+    streamlit run your_script_name.py
+    
+    ```
+    
+4. Open your web browser and go to `http://localhost:8501`.
+5. Upload an Excel file and select the desired sheet.
+6. Choose the type of analysis (Individual Sample Analysis or Overlay of All Samples).
+7. For Individual Sample Analysis, select a sample and configure peak parameters for Gaussian fitting.
+8. View the fitted results and download the data as needed.
+
+## Functions
+
+### `gaussian(x, amp, cen, sigma)`
+
+Calculates the Gaussian function.
+
+### `tougaard_background(x, a, b, c)`
+
+Calculates the Tougaard background function.
+
+### `combined_model(x, *params)`
+
+Combines multiple Gaussian peaks and a Tougaard background for fitting.
+
+### `add_header_to_xlsx(file_path, sheet_name)`
+
+Adds headers to the specified Excel sheet if not present.
+
+### `download_link(df, filename, text)`
+
+Generates a link for downloading a DataFrame as a CSV file.
+
+### `main()`
+
+Runs the Streamlit app.
