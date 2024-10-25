@@ -4,6 +4,8 @@
 
 This Streamlit app provides a user-friendly interface for analyzing X-ray Photoelectron Spectroscopy (XPS) data. It allows users to upload Excel files containing binding energy and intensity data, perform Gaussian fitting on selected samples, and visualize the results. Additionally, it offers functionality for background subtraction using the Tougaard method.
 
+[Link to the App!](https://xpsdataanalysisapp-g385smv4qhspc9fk7wxjbq.streamlit.app/)
+
 ## Features
 
 - **Upload Excel Files**: Users can upload Excel files containing XPS data.
@@ -40,7 +42,7 @@ pip install pandas streamlit plotly numpy scipy
 3. Run the Streamlit app:
     
     ```
-    streamlit run your_script_name.py
+    streamlit run XPS_Analysis_Streamlit.py
     ```
     
 4. Open your web browser and go to `http://localhost:8501`.
