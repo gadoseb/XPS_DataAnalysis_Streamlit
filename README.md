@@ -4,6 +4,8 @@
 
 This Streamlit app provides a user-friendly interface for analyzing X-ray Photoelectron Spectroscopy (XPS) data. It allows users to upload Excel files containing binding energy and intensity data, perform Gaussian fitting on selected samples, and visualize the results. Additionally, it offers functionality for background subtraction using the Tougaard method.
 
+[Link to the App!](https://xpsdataanalysisapp-g385smv4qhspc9fk7wxjbq.streamlit.app/)
+
 ## Features
 
 - **Upload Excel Files**: Users can upload Excel files containing XPS data.
@@ -12,6 +14,10 @@ This Streamlit app provides a user-friendly interface for analyzing X-ray Photoe
 - **Overlay of All Samples**: Visualize the intensity data of all samples on a single plot.
 - **Background Subtraction**: Apply Tougaard background correction to enhance fitting accuracy.
 - **Download Results**: Users can download fitted data as a CSV file for further analysis.
+
+## Sequence Diagram
+
+[![](https://mermaid.ink/img/pako:eNqNVMtu3DAM_BVBZ-cHfAiw6DZFgAItYqSHwhfWoneJ6FWJSroI8u-lX9tN3M3GB0EQZ8gZitaz7oJBXeuMvwv6DrcEuwSu9Uq-CImpowie1X3GtD5tOCE4S7yJcR39_KdDe0MW16HvNrA9TOdD6qvr69NctbqPNoCZUqj-mOMUJJxjhVrdocDzHpGVB4d5wh8BV6sKd8gl-TXlTYlBXa22lKOFw4zOaLFjCv4dA82ImQiXtH8NR-0GGC5nbfWtN_RIpoBVDbgo_dEqJAl8e8QkSls9ZZlWsKxWDLXxYA-ZZt9nvS9ORlIl5lkl8DvZRoSHE_Z_Fd_6WBayAm9GkjLIQPZ85Wk-6nFOxBftSLSOzRlzjPXPkl8LuCFWrlimQcAXKDkT-A9W7okZzVT3iXj_1vG7szKTZZC5Utvw5MeJ_tT8mPhoM6r5tlTo1cYuF_PRtvzjgnDzBe5rcV1wv8jP8mZB3rReV9phckBGXoXnIdBq3qOT-apla7AH6eUwXS8ChcKhOfhO15wKVjqFstvrugfxVukSpXHLk7JA5Pf_GYKbQS9_AZ1QiOA?type=png)](https://mermaid.live/edit#pako:eNqNVMtu3DAM_BVBZ-cHfAiw6DZFgAItYqSHwhfWoneJ6FWJSroI8u-lX9tN3M3GB0EQZ8gZitaz7oJBXeuMvwv6DrcEuwSu9Uq-CImpowie1X3GtD5tOCE4S7yJcR39_KdDe0MW16HvNrA9TOdD6qvr69NctbqPNoCZUqj-mOMUJJxjhVrdocDzHpGVB4d5wh8BV6sKd8gl-TXlTYlBXa22lKOFw4zOaLFjCv4dA82ImQiXtH8NR-0GGC5nbfWtN_RIpoBVDbgo_dEqJAl8e8QkSls9ZZlWsKxWDLXxYA-ZZt9nvS9ORlIl5lkl8DvZRoSHE_Z_Fd_6WBayAm9GkjLIQPZ85Wk-6nFOxBftSLSOzRlzjPXPkl8LuCFWrlimQcAXKDkT-A9W7okZzVT3iXj_1vG7szKTZZC5Utvw5MeJ_tT8mPhoM6r5tlTo1cYuF_PRtvzjgnDzBe5rcV1wv8jP8mZB3rReV9phckBGXoXnIdBq3qOT-apla7AH6eUwXS8ChcKhOfhO15wKVjqFstvrugfxVukSpXHLk7JA5Pf_GYKbQS9_AZ1QiOA)
 
 ## Installation
 
@@ -25,11 +31,8 @@ To run this app, you will need Python and the following libraries:
 
 You can install the required libraries using pip:
 
-```bash
-bash
-Copy code
+```
 pip install pandas streamlit plotly numpy scipy
-
 ```
 
 ## Usage
@@ -38,11 +41,8 @@ pip install pandas streamlit plotly numpy scipy
 2. Navigate to the directory containing the script.
 3. Run the Streamlit app:
     
-    ```bash
-    bash
-    Copy code
-    streamlit run your_script_name.py
-    
+    ```
+    streamlit run XPS_Analysis_Streamlit.py
     ```
     
 4. Open your web browser and go to `http://localhost:8501`.
