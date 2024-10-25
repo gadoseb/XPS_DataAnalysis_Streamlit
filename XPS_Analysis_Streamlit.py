@@ -118,7 +118,8 @@ def main():
                             combined_model, 
                             sliced_binding_energy, 
                             intensity_clean, 
-                            p0=initial_guess
+                            p0=initial_guess,
+                            maxfev=100000
                         )
 
                         # Unpack the optimized parameters
