@@ -58,11 +58,11 @@ def main():
             sample_columns = [col for col in df.columns if 'Sample' in col]
             selected_sample = st.selectbox("Select a sample column for Gaussian fitting", sample_columns)
 
-            # Plot original data
+            # Plot original data in descending order
             fig = go.FigureWidget()
             fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample][::-1], mode='lines', name='Original Data'))
             fig.update_layout(
-                xaxis_title='Binding Energy (eV)',
+                xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
                 yaxis_title='Intensity (a.u.)'
             )
             st.plotly_chart(fig)
@@ -83,7 +83,7 @@ def main():
                 fig = go.FigureWidget()
                 fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Selected Range'))
                 fig.update_layout(
-                    xaxis_title='Binding Energy (eV)',
+                    xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
                     yaxis_title='Intensity (a.u.)'
                 )
                 st.plotly_chart(fig)
@@ -180,7 +180,7 @@ def main():
                         ))
 
                         fig.update_layout(
-                            xaxis_title='Binding Energy (eV)',
+                            xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
                             yaxis_title='Intensity (a.u.)'
                         )
 
@@ -216,7 +216,7 @@ def main():
 
             fig.update_layout(
                 title=f"Overlay of Samples from {sheet_name}",
-                xaxis_title='Binding Energy (eV)',
+                xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
                 yaxis_title='Intensity (a.u.)',
                 legend_title="Samples"
             )
@@ -225,6 +225,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
