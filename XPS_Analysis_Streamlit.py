@@ -98,6 +98,7 @@ def main():
 
                 # Peak selection for multiple Gaussian fitting
                 st.sidebar.subheader("Select Multiple Peaks for Fitting")
+                st.sidebar.text("The range and peak centre values are used as initial guess for peak fitting.")
                 num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
                 peak_parameters = []
