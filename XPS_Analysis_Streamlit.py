@@ -1,3 +1,4 @@
+# Import necessary libraries
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
@@ -5,14 +6,15 @@ import numpy as np
 from scipy.optimize import curve_fit
 import base64
 
+# Define Gaussian function and Tougaard background
 def gaussian(x, amp, cen, sigma):
     return amp * np.exp(-((x - cen) ** 2) / (2 * sigma ** 2))
 
 def tougaard_background(x, a, b, c):
     return a + b * x + c * np.sqrt(x)
 
+# Combined model: Multiple Gaussian peaks + Tougaard background
 def combined_model(x, *params):
-    """Combined model: Multiple Gaussian peaks + Tougaard background."""
     num_peaks = (len(params) - 3) // 3  # Number of peaks
     background = tougaard_background(x, *params[-3:])  # Last 3 params are for background
     total_gaussian = np.zeros_like(x)
@@ -25,6 +27,7 @@ def combined_model(x, *params):
 
     return total_gaussian + background
 
+# Function to add header to uploaded Excel file
 def add_header_to_xlsx(file_path, sheet_name):
     df = pd.read_excel(file_path, sheet_name=sheet_name, header=None)
     total_columns = df.shape[1]
@@ -33,13 +36,14 @@ def add_header_to_xlsx(file_path, sheet_name):
     df = df.apply(pd.to_numeric, errors='coerce')
     return df
 
+# Function to generate download link
 def download_link(df, filename, text):
-    """Generates a link to download the data."""
     csv = df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()
     href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
     return href
 
+# Main function to run the Streamlit app
 def main():
     st.title("XPS Data Analysis with Multiple Gaussian Fitting")
 
@@ -50,7 +54,7 @@ def main():
         sheet_name = st.selectbox("Select a sheet", sheet_names)
 
         df = add_header_to_xlsx(uploaded_file, sheet_name)
-        binding_energy = df['Binding Energy'][::-1]  # Reversing for descending order
+        binding_energy = df['Binding Energy'][::-1]  # Reverse for descending order
 
         option = st.sidebar.selectbox("Choose an analysis type", ["Individual Sample Analysis", "Overlay of All Samples"])
 
@@ -58,7 +62,7 @@ def main():
             sample_columns = [col for col in df.columns if 'Sample' in col]
             selected_sample = st.selectbox("Select a sample column for Gaussian fitting", sample_columns)
 
-            # Plot original data in descending order
+            # Plot original data
             fig = go.FigureWidget()
             fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample][::-1], mode='lines', name='Original Data'))
             fig.update_layout(
@@ -88,7 +92,7 @@ def main():
                 )
                 st.plotly_chart(fig)
 
-                # Allow the user to select both peak range and center
+                # Peak selection for multiple Gaussian fitting
                 st.sidebar.subheader("Select Multiple Peaks for Fitting")
                 num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
@@ -99,11 +103,11 @@ def main():
                     peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
                     peak_parameters.append((peak_range, peak_center))
 
-                # Button to trigger multiple Gaussian fit
+                # Fit multiple Gaussians button
                 if st.sidebar.button("Fit Multiple Gaussians"):
                     initial_guess = []
 
-                    # Prepare fitting data for all selected peaks
+                    # Prepare fitting data for selected peaks
                     for i, (peak_range, peak_center) in enumerate(peak_parameters):
                         peak_mask = (sliced_binding_energy >= peak_range[0]) & (sliced_binding_energy <= peak_range[1])
                         selected_peak_intensity = intensity_clean[peak_mask]
@@ -115,10 +119,10 @@ def main():
                             1.0  # Sigma (initial guess)
                         ]
 
-                    # Add initial guesses for background: a, b, c
+                    # Initial guesses for background
                     initial_guess += [0, 1, 1]
 
-                    # Perform the curve fitting for multiple Gaussians with background
+                    # Perform the curve fitting
                     try:
                         popt, _ = curve_fit(
                             combined_model, 
@@ -128,12 +132,14 @@ def main():
                             maxfev=100000
                         )
 
-                        # Unpack the optimized parameters
+                        # Calculate fitted values and residuals
                         fit_values = combined_model(sliced_binding_energy, *popt)
+                        residuals = intensity_clean - fit_values
 
-                        # Plot the fitted data and individual Gaussian curves
+                        # Plot fitted data, individual Gaussian curves, and residuals
                         fig = go.Figure()
 
+                        # Combined fit
                         fig.add_trace(go.Scatter(
                             x=sliced_binding_energy, 
                             y=fit_values, 
@@ -160,7 +166,7 @@ def main():
                                 line=dict(dash='dash')
                             ))
 
-                        # Plot the background component
+                        # Plot background
                         background_values = tougaard_background(sliced_binding_energy, *popt[-3:])
                         fig.add_trace(go.Scatter(
                             x=sliced_binding_energy, 
@@ -168,6 +174,15 @@ def main():
                             mode='lines', 
                             name='Tougaard Background', 
                             line=dict(dash='dash', color='green')
+                        ))
+
+                        # Plot residuals
+                        fig.add_trace(go.Scatter(
+                            x=sliced_binding_energy,
+                            y=residuals,
+                            mode='lines',
+                            name='Residuals',
+                            line=dict(color='purple')
                         ))
 
                         # Plot original sliced data for reference
@@ -190,7 +205,8 @@ def main():
                         result_df = pd.DataFrame({
                             'Binding Energy': sliced_binding_energy,
                             'Original Intensity': intensity_clean,
-                            'Fitted Intensity': fit_values
+                            'Fitted Intensity': fit_values,
+                            'Residuals': residuals
                         })
                         for i in range(num_peaks):
                             result_df[f'Gaussian {i+1}'] = gaussian(sliced_binding_energy, popt[i*3], popt[i*3+1], popt[i*3+2])
@@ -213,18 +229,15 @@ def main():
                         mode='lines',
                         name=col
                     ))
-
             fig.update_layout(
-                title=f"Overlay of Samples from {sheet_name}",
                 xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
-                yaxis_title='Intensity (a.u.)',
-                legend_title="Samples"
+                yaxis_title='Intensity (a.u.)'
             )
-
             st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
+
 
 
 
