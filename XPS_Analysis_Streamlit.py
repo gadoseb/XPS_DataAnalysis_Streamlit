@@ -1,4 +1,3 @@
-# Import necessary libraries
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
@@ -76,7 +75,12 @@ def main():
             # Slicing data according to binding energy range
             energy_min = float(binding_energy.min())
             energy_max = float(binding_energy.max())
-            selected_range = st.slider("Select range for analysis", energy_min, energy_max, (energy_min, energy_max))
+            selected_range = st.slider(
+                "Select range for analysis",
+                energy_max,  # Start with maximum for descending display
+                energy_min,  # End with minimum
+                (energy_max, energy_min)  # Default value set from max to min
+            )
 
             mask = (binding_energy >= selected_range[0]) & (binding_energy <= selected_range[1])
             sliced_binding_energy = binding_energy[mask]
@@ -99,7 +103,13 @@ def main():
                 peak_parameters = []
                 for i in range(num_peaks):
                     st.sidebar.write(f"Select range and center for Peak {i+1}")
-                    peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[0], selected_range[1], (selected_range[0], selected_range[1]))
+                    peak_range = st.sidebar.slider(
+                        f"Select peak range {i+1}", 
+                        selected_range[1],  # Use the end of selected_range as min
+                        selected_range[0],  # Use the start of selected_range as max
+                        (selected_range[0], selected_range[1])  # Default to full range
+                    )
+                    #peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[0], selected_range[1], (selected_range[0], selected_range[1]))
                     peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
                     peak_parameters.append((peak_range, peak_center))
 
@@ -237,9 +247,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
