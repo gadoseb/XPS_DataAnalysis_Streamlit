@@ -50,7 +50,7 @@ def main():
         sheet_name = st.selectbox("Select a sheet", sheet_names)
 
         df = add_header_to_xlsx(uploaded_file, sheet_name)
-        binding_energy = df['Binding Energy']
+        binding_energy = df['Binding Energy'][::-1]  # Reversing for descending order
 
         option = st.sidebar.selectbox("Choose an analysis type", ["Individual Sample Analysis", "Overlay of All Samples"])
 
@@ -60,7 +60,11 @@ def main():
 
             # Plot original data
             fig = go.FigureWidget()
-            fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample], mode='lines', name='Original Data'))
+            fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample][::-1], mode='lines', name='Original Data'))
+            fig.update_layout(
+                xaxis_title='Binding Energy (eV)',
+                yaxis_title='Intensity (a.u.)'
+            )
             st.plotly_chart(fig)
 
             st.subheader("Slice the Data")
@@ -72,13 +76,16 @@ def main():
 
             mask = (binding_energy >= selected_range[0]) & (binding_energy <= selected_range[1])
             sliced_binding_energy = binding_energy[mask]
-            intensity_clean = df[selected_sample].dropna()[mask]
+            intensity_clean = df[selected_sample][::-1][mask]
 
             if not intensity_clean.empty:
                 # Plot the selected range
                 fig = go.FigureWidget()
                 fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Selected Range'))
-                
+                fig.update_layout(
+                    xaxis_title='Binding Energy (eV)',
+                    yaxis_title='Intensity (a.u.)'
+                )
                 st.plotly_chart(fig)
 
                 # Allow the user to select both peak range and center
@@ -90,24 +97,23 @@ def main():
                     st.sidebar.write(f"Select range and center for Peak {i+1}")
                     peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[0], selected_range[1], (selected_range[0], selected_range[1]))
                     peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
-                    peak_max = st.sidebar.number_input(f"Input maximum intensity value for Peak {i+1}", value=float(max(intensity_clean)))
-                    peak_parameters.append((peak_range, peak_center, peak_max))
+                    peak_parameters.append((peak_range, peak_center))
 
                 # Button to trigger multiple Gaussian fit
                 if st.sidebar.button("Fit Multiple Gaussians"):
                     initial_guess = []
 
                     # Prepare fitting data for all selected peaks
-                    for i, (peak_range, peak_center, peak_max) in enumerate(peak_parameters):
+                    for i, (peak_range, peak_center) in enumerate(peak_parameters):
                         peak_mask = (sliced_binding_energy >= peak_range[0]) & (sliced_binding_energy <= peak_range[1])
                         selected_peak_intensity = intensity_clean[peak_mask]
+                        peak_max = selected_peak_intensity.max() if not selected_peak_intensity.empty else 1
 
-                        if not selected_peak_intensity.empty:
-                            initial_guess += [
-                                peak_max,  # Amplitude from user input
-                                peak_center,  # Center from user input
-                                1.0  # Sigma (initial guess)
-                            ]
+                        initial_guess += [
+                            peak_max,  # Amplitude from data
+                            peak_center,  # Center from user input
+                            1.0  # Sigma (initial guess)
+                        ]
 
                     # Add initial guesses for background: a, b, c
                     initial_guess += [0, 1, 1]
@@ -136,7 +142,7 @@ def main():
                             line=dict(color='red')
                         ))
 
-                        # Plot each Gaussian component (filled areas for aesthetics like in the picture)
+                        # Plot each Gaussian component
                         for i in range(num_peaks):
                             amp = popt[i*3]
                             cen = popt[i*3+1]
@@ -173,6 +179,11 @@ def main():
                             line=dict(color='blue')
                         ))
 
+                        fig.update_layout(
+                            xaxis_title='Binding Energy (eV)',
+                            yaxis_title='Intensity (a.u.)'
+                        )
+
                         st.plotly_chart(fig)
 
                         # Prepare data for download
@@ -195,7 +206,7 @@ def main():
             fig = go.Figure()
             for col in df.columns:
                 if 'Sample' in col:
-                    intensity = df[col].dropna()
+                    intensity = df[col].dropna()[::-1]
                     fig.add_trace(go.Scatter(
                         x=binding_energy.loc[intensity.index],
                         y=intensity,
@@ -214,6 +225,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
