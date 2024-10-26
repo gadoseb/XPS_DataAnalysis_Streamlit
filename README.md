@@ -11,8 +11,9 @@ This Streamlit app provides a user-friendly interface for analyzing X-ray Photoe
 - **Upload Excel Files**: Users can upload Excel files containing XPS data.
 - **Select Sheets**: Choose from multiple sheets within the uploaded Excel file.
 - **Individual Sample Analysis**: Perform Gaussian fitting on a selected sample with the option to customize peak parameters.
-- **Overlay of All Samples**: Visualize the intensity data of all samples on a single plot.
+- **Overlay of All Samples**: Visualise the intensity data of all samples on a single plot.
 - **Background Subtraction**: Apply Tougaard background correction to enhance fitting accuracy.
+- **Residuals Visualisation**: Visualise the residual spectrum, by calculating the difference between the original intensity and the fitted intensity.
 - **Download Results**: Users can download fitted data as a CSV file for further analysis.
 
 ## Sequence Diagram
