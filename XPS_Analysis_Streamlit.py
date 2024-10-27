@@ -270,11 +270,35 @@ def main():
 
                         st.plotly_chart(new_fig)
 
-
                         #new_fig.add_trace(go.Scatter(x=sliced_binding_energy, y=updated_fit_values, mode='lines', name='Updated Fit', line=dict(color='red')))
                         #new_fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
                         #st.plotly_chart(fig)
                         st.session_state['updated_params'] = updated_params  # Save updated parameters
+
+                        # Prepare data for download
+                        result_df = pd.DataFrame({
+                            'Binding Energy': sliced_binding_energy,
+                            'Original Intensity': intensity_clean,
+                            'Fitted Intensity': fit_values,
+                            'Residuals': residuals
+                        })
+                        for i in range(num_peaks):
+                            result_df[f'Gaussian {i+1}'] = gaussian(sliced_binding_energy, popt[i*3], popt[i*3+1], popt[i*3+2])
+                        result_df['Background'] = background_values
+
+                        st.markdown(download_link(result_df, 'fitted_data.csv', 'Download Fitted Data as CSV'), unsafe_allow_html=True)
+
+                        updated_results_df = pd.DataFrame({
+                            'Binding Energy': sliced_binding_energy,
+                            'Original Intensity': intensity_clean,
+                            'Fitted Intensity': updated_fit_values,
+                            'Residuals': updated_residuals
+                        })
+                        for i in range(num_peaks):
+                            updated_results_df[f'Gaussian {i+1}'] = gaussian(sliced_binding_energy, updated_params[i*3], updated_params[i*3+1], updated_params[i*3+2])
+                        updated_results_df['Background'] = updated_background_values
+
+                        st.markdown(download_link(result_df, 'user_modified_fitted_data.csv', 'Download Adjusted Fitted Data as CSV'), unsafe_allow_html=True)
 
         elif option == "Overlay of All Samples":
             st.subheader("Plot Samples")
