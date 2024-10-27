@@ -211,6 +211,34 @@ def main():
 
                         st.plotly_chart(fig)
 
+                        # Create controls for interactive adjustment
+                        st.sidebar.subheader("Adjust Gaussian Parameters")
+                        updated_params = list(popt)  # Copy initial parameters for updates
+                        for i in range(num_peaks):
+                            st.sidebar.write(f"Adjust Gaussian {i+1}")
+                            updated_params[i*3] = st.sidebar.slider(f"Amplitude {i+1}", 0.1, 2*popt[i*3], popt[i*3])
+                            updated_params[i*3+1] = st.sidebar.slider(f"Center {i+1}", sliced_binding_energy.min(), sliced_binding_energy.max(), popt[i*3+1])
+                            updated_params[i*3+2] = st.sidebar.slider(f"Width {i+1}", 0.1, 2*popt[i*3+2], popt[i*3+2])
+
+                        if st.button("Update Fit"):
+                            # Update each Gaussian with adjusted parameters
+                            updated_fit_values = combined_model(sliced_binding_energy, *updated_params)
+                            residuals = intensity_clean - updated_fit_values
+                            
+                            # Update combined fit and residual plot
+                            fig.data[1].y = updated_fit_values  # Update combined fit line
+                            fig.data[-1].y = residuals  # Update residual line
+
+                            # Update individual Gaussians with new parameters
+                            for i, trace in enumerate(gaussian_traces):
+                                amp = updated_params[i*3]
+                                cen = updated_params[i*3+1]
+                                sigma = updated_params[i*3+2]
+                                gaussian_y = gaussian(sliced_binding_energy, amp, cen, sigma) + tougaard_background(sliced_binding_energy, *updated_params[-3:])
+                                trace.y = gaussian_y  # Update each Gaussian line
+
+                            st.plotly_chart(fig)  # Redisplay the updated plot
+
                         # Prepare data for download
                         result_df = pd.DataFrame({
                             'Binding Energy': sliced_binding_energy,
