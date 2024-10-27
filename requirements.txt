@@ -5,3 +5,4 @@ plotly
 numpy
 scipy
 ipywidgets>=7.0.0
+kaleido
