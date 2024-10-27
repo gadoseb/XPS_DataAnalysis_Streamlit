@@ -315,34 +315,6 @@ def main():
                 yaxis_title='Intensity (a.u.)'
             )
             st.plotly_chart(fig)
-    
-    # Create two columns: one for the main content and one for the right sidebar
-    left_column, right_column = st.columns([3, 1])
-
-    with right_column:
-        # Notes section
-        st.subheader("Notes")
-        st.text_area("Write your notes here", height=150)
-
-        # Calculator
-        st.subheader("Calculator")
-        num1 = st.number_input("Number 1", step=0.1)
-        num2 = st.number_input("Number 2", step=0.1)
-        operation = st.selectbox("Operation", ["Add", "Subtract", "Multiply", "Divide"])
-
-        if st.button("Calculate"):
-            if operation == "Add":
-                result = num1 + num2
-            elif operation == "Subtract":
-                result = num1 - num2
-            elif operation == "Multiply":
-                result = num1 * num2
-            elif operation == "Divide":
-                if num2 != 0:
-                    result = num1 / num2
-                else:
-                    result = "Cannot divide by zero"
-            st.write(f"Result: {result}")
 
 if __name__ == "__main__":
     main()
