@@ -197,7 +197,7 @@ def main():
                 # Adjust peaks if initial fitting is done
                 if st.session_state['initial_fit_params'] is not None:
                     st.sidebar.subheader("Adjust Gaussian Parameters")
-                    updated_params = st.sidebar.session_state['updated_params']
+                    updated_params = st.session_state['updated_params']
                     for i in range(num_peaks):
                         st.write(f"Adjust Gaussian {i+1}")
                         updated_params[i*3] = st.sidebar.slider(f"Amplitude {i+1}", 0.1, 2*updated_params[i*3], updated_params[i*3])
