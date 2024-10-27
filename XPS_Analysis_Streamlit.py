@@ -298,7 +298,7 @@ def main():
                             updated_results_df[f'Gaussian {i+1}'] = gaussian(sliced_binding_energy, updated_params[i*3], updated_params[i*3+1], updated_params[i*3+2])
                         updated_results_df['Background'] = updated_background_values
 
-                        st.markdown(download_link(result_df, 'user_modified_fitted_data.csv', 'Download Adjusted Fitted Data as CSV'), unsafe_allow_html=True)
+                        st.markdown(download_link(updated_results_df, 'user_modified_fitted_data.csv', 'Download Adjusted Fitted Data as CSV'), unsafe_allow_html=True)
 
         elif option == "Overlay of All Samples":
             st.subheader("Plot Samples")
