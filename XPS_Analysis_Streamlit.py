@@ -191,8 +191,21 @@ def main():
                         #fig.add_trace(go.Scatter(x=sliced_binding_energy, y=fit_values, mode='lines', name='Initial Fit', line=dict(color='red')))
                         #fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
                         #st.plotly_chart(fig)
-                    except RuntimeError:
-                        st.error("Fitting did not converge. Try adjusting initial parameters.")
+                        # Prepare data for download
+                        result_df = pd.DataFrame({
+                            'Binding Energy': sliced_binding_energy,
+                            'Original Intensity': intensity_clean,
+                            'Fitted Intensity': fit_values,
+                            'Residuals': residuals
+                        })
+                        for i in range(num_peaks):
+                            result_df[f'Gaussian {i+1}'] = gaussian(sliced_binding_energy, popt[i*3], popt[i*3+1], popt[i*3+2])
+                        result_df['Background'] = background_values
+
+                        st.markdown(download_link(result_df, 'fitted_data.csv', 'Download Fitted Data as CSV'), unsafe_allow_html=True)
+
+                    except RuntimeError as e:
+                        st.error(f"Could not fit Gaussian: {e}")
 
                 # Adjust peaks if initial fitting is done
                 if st.session_state['initial_fit_params'] is not None:
@@ -274,19 +287,6 @@ def main():
                         #new_fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
                         #st.plotly_chart(fig)
                         st.session_state['updated_params'] = updated_params  # Save updated parameters
-
-                        # Prepare data for download
-                        result_df = pd.DataFrame({
-                            'Binding Energy': sliced_binding_energy,
-                            'Original Intensity': intensity_clean,
-                            'Fitted Intensity': fit_values,
-                            'Residuals': residuals
-                        })
-                        for i in range(num_peaks):
-                            result_df[f'Gaussian {i+1}'] = gaussian(sliced_binding_energy, popt[i*3], popt[i*3+1], popt[i*3+2])
-                        result_df['Background'] = background_values
-
-                        st.markdown(download_link(result_df, 'fitted_data.csv', 'Download Fitted Data as CSV'), unsafe_allow_html=True)
 
                         updated_results_df = pd.DataFrame({
                             'Binding Energy': sliced_binding_energy,
