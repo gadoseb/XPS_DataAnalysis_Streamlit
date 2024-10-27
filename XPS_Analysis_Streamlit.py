@@ -63,6 +63,7 @@ def main():
         binding_energy = df['Binding Energy'][::-1]  # Reverse for descending order
 
         # Option selector for analysis type
+        st.sidebar.header("XPS Analysis")
         option = st.sidebar.selectbox("Choose an analysis type", ["Individual Sample Analysis", "Overlay of All Samples"])
 
         if option == "Individual Sample Analysis":
@@ -78,7 +79,7 @@ def main():
             )
             st.plotly_chart(fig)
 
-            st.subheader("Slice the Data")
+            st.header("Slice the Data")
             energy_min = float(binding_energy.min())
             energy_max = float(binding_energy.max())
             selected_range = st.slider("Select range for analysis", energy_max, energy_min, (energy_max, energy_min))
@@ -122,6 +123,8 @@ def main():
                         popt, _ = curve_fit(combined_model, sliced_binding_energy, intensity_clean, p0=initial_guess, maxfev=100000)
                         st.session_state['initial_fit_params'] = popt  # Save initial fit parameters
                         st.session_state['updated_params'] = popt.copy()  # Copy for updates
+
+                        st.header("Peak Fitting")
 
                         # Plot initial fit
                         fit_values = combined_model(sliced_binding_energy, *popt)
