@@ -305,15 +305,62 @@ def main():
 
         elif option == "Overlay of All Samples":
             st.subheader("Plot Samples")
+
+            # Sidebar options for plot customization
+            st.sidebar.header("Plot Customization")
+
+            # Line options
+            line_color = st.sidebar.color_picker("Line Color", "#1f77b4")
+            line_width = st.sidebar.slider("Line Width", 0.5, 5.0, 2.0)
+            font_size = st.sidebar.slider("Font Size", 10, 24, 14)
+            
+            # Font family selection
+            font_family = st.sidebar.selectbox(
+                "Font Family",
+                ["Arial", "Courier New", "Helvetica", "Times New Roman", "Verdana"]
+            )
+
+            # Grid options
+            show_grid = st.sidebar.checkbox("Show Grid", True)
+            grid_color = st.sidebar.color_picker("Grid Color", "#e6e6e6") if show_grid else None
+
+            # Axis titles
+            xaxis_title = st.sidebar.text_input("X-axis Title", "Binding Energy (eV)")
+            yaxis_title = st.sidebar.text_input("Y-axis Title", "Intensity (a.u.)")
+
+            # Create the plot with customization options
             fig = go.Figure()
             for col in df.columns:
                 if 'Sample' in col:
                     intensity = df[col].dropna()[::-1]
-                    fig.add_trace(go.Scatter(x=binding_energy.loc[intensity.index], y=intensity, mode='lines', name=col))
+                    fig.add_trace(go.Scatter(
+                        x=binding_energy.loc[intensity.index], 
+                        y=intensity, 
+                        mode='lines', 
+                        name=col,
+                        line=dict(color=line_color, width=line_width)
+                    ))
+            
+            # Update layout with user-defined styles
             fig.update_layout(
-                xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
-                yaxis_title='Intensity (a.u.)'
+                xaxis=dict(
+                    title=xaxis_title,
+                    autorange='reversed',
+                    showgrid=show_grid,
+                    gridcolor=grid_color
+                ),
+                yaxis=dict(
+                    title=yaxis_title,
+                    showgrid=show_grid,
+                    gridcolor=grid_color
+                ),
+                font=dict(
+                    family=font_family,
+                    size=font_size
+                )
             )
+
+            # Display the plot
             st.plotly_chart(fig)
 
 if __name__ == "__main__":
