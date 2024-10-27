@@ -190,7 +190,7 @@ def main():
                         st.plotly_chart(fig)
                         #fig.add_trace(go.Scatter(x=sliced_binding_energy, y=fit_values, mode='lines', name='Initial Fit', line=dict(color='red')))
                         #fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
-                        st.plotly_chart(fig)
+                        #st.plotly_chart(fig)
                     except RuntimeError:
                         st.error("Fitting did not converge. Try adjusting initial parameters.")
 
