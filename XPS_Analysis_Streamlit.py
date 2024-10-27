@@ -309,16 +309,12 @@ def main():
             # Sidebar options for plot customization
             st.sidebar.header("Plot Customization")
 
-            # Line options
-            line_color = st.sidebar.color_picker("Line Color", "#1f77b4")
-            line_width = st.sidebar.slider("Line Width", 0.5, 5.0, 2.0)
-            font_size = st.sidebar.slider("Font Size", 10, 24, 14)
-            
-            # Font family selection
+            # Font options
             font_family = st.sidebar.selectbox(
                 "Font Family",
                 ["Arial", "Courier New", "Helvetica", "Times New Roman", "Verdana"]
             )
+            font_size = st.sidebar.slider("Font Size", 10, 24, 14)
 
             # Grid options
             show_grid = st.sidebar.checkbox("Show Grid", True)
@@ -328,20 +324,31 @@ def main():
             xaxis_title = st.sidebar.text_input("X-axis Title", "Binding Energy (eV)")
             yaxis_title = st.sidebar.text_input("Y-axis Title", "Intensity (a.u.)")
 
-            # Create the plot with customization options
+            # Initialize figure
             fig = go.Figure()
-            for col in df.columns:
+
+            # Customize each line
+            for i, col in enumerate(df.columns):
                 if 'Sample' in col:
+                    # Line customization for each sample
+                    with st.sidebar.expander(f"Customize {col}"):
+                        # Input to modify the sample name
+                        new_sample_name = st.text_input(f"Rename {col}", value=col)
+                        line_color = st.color_picker(f"{new_sample_name} Line Color", "#1f77b4")
+                        line_width = st.slider(f"{new_sample_name} Line Width", 0.5, 5.0, 2.0)
+                        line_dash = st.selectbox(f"{new_sample_name} Line Style", ["solid", "dash", "dot", "dashdot"], index=0)
+
+                    # Add trace with specific customizations
                     intensity = df[col].dropna()[::-1]
                     fig.add_trace(go.Scatter(
-                        x=binding_energy.loc[intensity.index], 
-                        y=intensity, 
-                        mode='lines', 
-                        name=col,
-                        line=dict(color=line_color, width=line_width)
+                        x=binding_energy.loc[intensity.index],
+                        y=intensity,
+                        mode='lines',
+                        name=new_sample_name,  # Use the modified name here
+                        line=dict(color=line_color, width=line_width, dash=line_dash)
                     ))
-            
-            # Update layout with user-defined styles
+
+            # Update layout with global font and grid settings
             fig.update_layout(
                 xaxis=dict(
                     title=xaxis_title,
