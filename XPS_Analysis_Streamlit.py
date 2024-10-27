@@ -210,7 +210,7 @@ def main():
                         fig.add_trace(go.Scatter(x=sliced_binding_energy, y=updated_fit_values, mode='lines', name='Updated Fit', line=dict(color='red')))
                         fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
                         st.plotly_chart(fig)
-                        st.sidebar.session_state['updated_params'] = updated_params  # Save updated parameters
+                        st.session_state['updated_params'] = updated_params  # Save updated parameters
 
         elif option == "Overlay of All Samples":
             st.subheader("Plot Samples")
