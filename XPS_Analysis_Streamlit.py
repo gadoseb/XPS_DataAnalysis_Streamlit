@@ -199,17 +199,81 @@ def main():
                     st.sidebar.subheader("Adjust Gaussian Parameters")
                     updated_params = st.session_state['updated_params']
                     for i in range(num_peaks):
-                        st.write(f"Adjust Gaussian {i+1}")
+                        st.sidebar.write(f"Adjust Gaussian {i+1}")
                         updated_params[i*3] = st.sidebar.slider(f"Amplitude {i+1}", 0.1, 2*updated_params[i*3], updated_params[i*3])
                         updated_params[i*3+1] = st.sidebar.slider(f"Center {i+1}", sliced_binding_energy.min(), sliced_binding_energy.max(), updated_params[i*3+1])
                         updated_params[i*3+2] = st.sidebar.slider(f"Width {i+1}", 0.1, 2*updated_params[i*3+2], updated_params[i*3+2])
 
                     if st.sidebar.button("Update Fit"):
                         updated_fit_values = combined_model(sliced_binding_energy, *updated_params)
-                        fig = go.Figure()
-                        fig.add_trace(go.Scatter(x=sliced_binding_energy, y=updated_fit_values, mode='lines', name='Updated Fit', line=dict(color='red')))
-                        fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
+                        updated_residuals = intensity_clean - updated_fit_values
+                        new_fig = go.Figure()
+                        # Combined fit
+                        new_fig.add_trace(go.Scatter(
+                            x=sliced_binding_energy, 
+                            y=updated_fit_values, 
+                            mode='lines', 
+                            name='Combined Fit', 
+                            line=dict(color='red')
+                        ))
+
+                        # Plot each Gaussian component
+                        for i in range(num_peaks):
+                            amp = updated_params[i*3]
+                            cen = updated_params[i*3+1]
+                            sigma = updated_params[i*3+2]
+                            updated_gaussian_values = gaussian(sliced_binding_energy, amp, cen, sigma)
+
+                            updated_background_values = tougaard_background(sliced_binding_energy, *updated_params[-3:])
+                            updated_gaussian_values_with_background = updated_gaussian_values + updated_background_values
+
+                            new_fig.add_trace(go.Scatter(
+                                x=sliced_binding_energy, 
+                                y=updated_gaussian_values_with_background, 
+                                mode='lines', 
+                                name=f'Gaussian {i+1}', 
+                                line=dict(dash='dash')
+                            ))
+
+                        # Plot background
+                        updated_background_values = tougaard_background(sliced_binding_energy, *updated_params[-3:])
+                        new_fig.add_trace(go.Scatter(
+                            x=sliced_binding_energy, 
+                            y=updated_background_values, 
+                            mode='lines', 
+                            name='Tougaard Background', 
+                            line=dict(dash='dash', color='green')
+                        ))
+
+                        # Plot residuals
+                        new_fig.add_trace(go.Scatter(
+                            x=sliced_binding_energy,
+                            y=updated_residuals,
+                            mode='lines',
+                            name='Residuals',
+                            line=dict(color='purple')
+                        ))
+
+                        # Plot original sliced data for reference
+                        new_fig.add_trace(go.Scatter(
+                            x=sliced_binding_energy, 
+                            y=intensity_clean, 
+                            mode='lines', 
+                            name='Sliced Data', 
+                            line=dict(color='blue')
+                        ))
+
+                        new_fig.update_layout(
+                            xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
+                            yaxis_title='Intensity (a.u.)'
+                        )
+
                         st.plotly_chart(fig)
+
+
+                        #new_fig.add_trace(go.Scatter(x=sliced_binding_energy, y=updated_fit_values, mode='lines', name='Updated Fit', line=dict(color='red')))
+                        #new_fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Sliced Data', line=dict(color='blue')))
+                        #st.plotly_chart(fig)
                         st.session_state['updated_params'] = updated_params  # Save updated parameters
 
         elif option == "Overlay of All Samples":
