@@ -98,6 +98,7 @@ def main():
 
                 # Peak selection for multiple Gaussian fitting
                 st.sidebar.subheader("Select Multiple Peaks for Fitting")
+
                 num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
                 peak_parameters = []
@@ -210,75 +211,6 @@ def main():
                         )
 
                         st.plotly_chart(fig)
-
-                        # Option to proceed with adjustments or download
-                        if st.sidebar.radio("Would you like to adjust individual peaks?", ("No", "Yes")) == "Yes":
-                            # Interactive adjustments setup
-                            st.subheader("Adjust Gaussian Peaks")
-
-                            # Copy initial parameters for adjustments
-                            adjusted_params = list(popt)
-                            sliders = []
-                            for i in range(num_peaks):
-                                st.write(f"Adjust Gaussian {i+1}")
-                                amp_slider = st.slider(f"Amplitude {i+1}", 0.1, 2*popt[i*3], popt[i*3])
-                                cen_slider = st.slider(f"Center {i+1}", sliced_binding_energy.min(), sliced_binding_energy.max(), popt[i*3+1])
-                                sigma_slider = st.slider(f"Width {i+1}", 0.1, 2*popt[i*3+2], popt[i*3+2])
-                                sliders.extend([amp_slider, cen_slider, sigma_slider])
-
-                            if st.button("Apply Changes"):
-                                # Update fitting based on sliders
-                                for i in range(num_peaks):
-                                    adjusted_params[i*3] = sliders[i*3]
-                                    adjusted_params[i*3+1] = sliders[i*3+1]
-                                    adjusted_params[i*3+2] = sliders[i*3+2]
-
-                                # Generate updated fit and residuals
-                                updated_fit_values = combined_model(sliced_binding_energy, *adjusted_params)
-                                updated_residuals = intensity_clean - updated_fit_values
-
-                                # New interactive plot with adjustments
-                                adjusted_fig = go.Figure()
-                                adjusted_fig.add_trace(go.Scatter(
-                                    x=sliced_binding_energy,
-                                    y=intensity_clean,
-                                    mode='lines',
-                                    name='Original Data',
-                                    line=dict(color='blue')
-                                ))
-                                adjusted_fig.add_trace(go.Scatter(
-                                    x=sliced_binding_energy,
-                                    y=updated_fit_values,
-                                    mode='lines',
-                                    name='Adjusted Combined Fit',
-                                    line=dict(color='red')
-                                ))
-                                adjusted_fig.add_trace(go.Scatter(
-                                    x=sliced_binding_energy,
-                                    y=updated_residuals,
-                                    mode='lines',
-                                    name='Adjusted Residuals',
-                                    line=dict(color='purple')
-                                ))
-
-                                # Plot each updated Gaussian
-                                for i in range(num_peaks):
-                                    amp = adjusted_params[i*3]
-                                    cen = adjusted_params[i*3+1]
-                                    sigma = adjusted_params[i*3+2]
-                                    gaussian_y = gaussian(sliced_binding_energy, amp, cen, sigma)
-                                    adjusted_fig.add_trace(go.Scatter(
-                                        x=sliced_binding_energy,
-                                        y=gaussian_y,
-                                        mode='lines',
-                                        name=f'Adjusted Gaussian {i+1}',
-                                        line=dict(dash='dash')
-                                    ))
-
-                                st.plotly_chart(adjusted_fig)
-
-                        else:
-                            st.download_button("Download Initial Fit Plot", data=fig.to_image(format="png"), file_name="initial_fit_plot.png")
 
                         # Prepare data for download
                         result_df = pd.DataFrame({
