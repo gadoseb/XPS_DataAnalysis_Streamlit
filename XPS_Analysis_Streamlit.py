@@ -111,16 +111,19 @@ def main():
             else:
                 mask = (binding_energy >= end_range) & (binding_energy <= start_range)
                 sliced_binding_energy = binding_energy[mask].dropna()
-                intensity_clean = df[selected_sample][::-1][mask]
+                intensity_clean = df[selected_sample][::-1][mask].dropna()
+
+                aligned_data = pd.DataFrame({'Binding Energy': sliced_binding_energy,
+                                             selected_sample: intensity_clean}).dropna()
 
             #mask = (binding_energy >= selected_range[0]) & (binding_energy <= selected_range[1])
             #sliced_binding_energy = binding_energy[mask]
             #intensity_clean = df[selected_sample][::-1][mask]
 
-            if not intensity_clean.empty:
+            if not aligned_data.empty:
                 # Plot the selected range
                 fig = go.FigureWidget()
-                fig.add_trace(go.Scatter(x=sliced_binding_energy, y=intensity_clean, mode='lines', name='Selected Range'))
+                fig.add_trace(go.Scatter(x=aligned_data['Binding Energy'], y=aligned_data[selected_sample], mode='lines', name='Selected Range'))
                 fig.update_layout(
                     xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
                     yaxis_title='Intensity (a.u.)'
