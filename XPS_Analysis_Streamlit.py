@@ -80,13 +80,25 @@ def main():
             st.plotly_chart(fig)
 
             st.header("Slice the Data")
+            #energy_min = float(binding_energy.min())
+            #energy_max = float(binding_energy.max())
+            #selected_range = st.slider("Select range for analysis", energy_max, energy_min, (energy_max, energy_min))
+
             energy_min = float(binding_energy.min())
             energy_max = float(binding_energy.max())
-            selected_range = st.slider("Select range for analysis", energy_max, energy_min, (energy_max, energy_min))
+            start_range = st.number_input("Start of range for analysis", value=energy_max, step=0.1)
+            end_range = st.number_input("End of range for analysis", value=energy_min, step=0.1)
 
-            mask = (binding_energy >= selected_range[0]) & (binding_energy <= selected_range[1])
-            sliced_binding_energy = binding_energy[mask]
-            intensity_clean = df[selected_sample][::-1][mask]
+            if start_range < end_range:
+                st.warning("Start of range must be greater than the end (binding energy axis is reversed).")
+            else:
+                mask = (binding_energy >= end_range) & (binding_energy <= start_range)
+                sliced_binding_energy = binding_energy[mask]
+                intensity_clean = df[selected_sample][::-1][mask]
+
+            #mask = (binding_energy >= selected_range[0]) & (binding_energy <= selected_range[1])
+            #sliced_binding_energy = binding_energy[mask]
+            #intensity_clean = df[selected_sample][::-1][mask]
 
             if not intensity_clean.empty:
                 # Plot the selected range
@@ -102,12 +114,24 @@ def main():
                 st.sidebar.subheader("Select Multiple Peaks for Fitting")
                 num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
+                # Numerical inputs for peak parameters
+                st.sidebar.subheader("Select Multiple Peaks for Fitting")
+                num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
+
+                #peak_parameters = []
+                #for i in range(num_peaks):
+                    #st.sidebar.write(f"Select range and center for Peak {i+1}")
+                    #peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[1], selected_range[0], (selected_range[0], selected_range[1]))
+                    #peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
+                    #peak_parameters.append((peak_range, peak_center))
+
                 peak_parameters = []
                 for i in range(num_peaks):
-                    st.sidebar.write(f"Select range and center for Peak {i+1}")
-                    peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[1], selected_range[0], (selected_range[0], selected_range[1]))
-                    peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
-                    peak_parameters.append((peak_range, peak_center))
+                    st.sidebar.write(f"Parameters for Peak {i + 1}")
+                    peak_center = st.sidebar.number_input(f"Center value for Peak {i + 1}", value=float(np.mean([start_range, end_range])), step=0.1)
+                    peak_amplitude = st.sidebar.number_input(f"Amplitude for Peak {i + 1}", value=1.0, step=0.1)
+                    peak_width = st.sidebar.number_input(f"Width for Peak {i + 1}", value=1.0, step=0.1)
+                    peak_parameters.append((peak_amplitude, peak_center, peak_width))
 
                 # Fit multiple Gaussians button
                 if st.sidebar.button("Fit Multiple Gaussians"):
@@ -211,14 +235,23 @@ def main():
                         st.error(f"Could not fit Gaussian: {e}")
 
                 # Adjust peaks if initial fitting is done
+                #if st.session_state['initial_fit_params'] is not None:
+                    #st.sidebar.subheader("Adjust Gaussian Parameters")
+                    #updated_params = st.session_state['updated_params']
+                    #for i in range(num_peaks):
+                        #st.sidebar.write(f"Adjust Gaussian {i+1}")
+                        #updated_params[i*3] = st.sidebar.slider(f"Amplitude {i+1}", 0.1, 2*updated_params[i*3], updated_params[i*3])
+                        #updated_params[i*3+1] = st.sidebar.slider(f"Center {i+1}", sliced_binding_energy.min(), sliced_binding_energy.max(), updated_params[i*3+1])
+                        #updated_params[i*3+2] = st.sidebar.slider(f"Width {i+1}", 0.1, 2*updated_params[i*3+2], updated_params[i*3+2])
+
                 if st.session_state['initial_fit_params'] is not None:
                     st.sidebar.subheader("Adjust Gaussian Parameters")
                     updated_params = st.session_state['updated_params']
                     for i in range(num_peaks):
-                        st.sidebar.write(f"Adjust Gaussian {i+1}")
-                        updated_params[i*3] = st.sidebar.slider(f"Amplitude {i+1}", 0.1, 2*updated_params[i*3], updated_params[i*3])
-                        updated_params[i*3+1] = st.sidebar.slider(f"Center {i+1}", sliced_binding_energy.min(), sliced_binding_energy.max(), updated_params[i*3+1])
-                        updated_params[i*3+2] = st.sidebar.slider(f"Width {i+1}", 0.1, 2*updated_params[i*3+2], updated_params[i*3+2])
+                        st.sidebar.write(f"Adjust Parameters for Gaussian {i + 1}")
+                        updated_params[i * 3] = st.sidebar.number_input(f"Amplitude {i + 1}", value=updated_params[i * 3], step=0.1)
+                        updated_params[i * 3 + 1] = st.sidebar.number_input(f"Center {i + 1}", value=updated_params[i * 3 + 1], step=0.1)
+                        updated_params[i * 3 + 2] = st.sidebar.number_input(f"Width {i + 1}", value=updated_params[i * 3 + 2], step=0.1)
 
                     if st.sidebar.button("Update Fit"):
                         updated_fit_values = combined_model(sliced_binding_energy, *updated_params)
