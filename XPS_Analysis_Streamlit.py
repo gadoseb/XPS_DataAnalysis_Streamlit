@@ -121,6 +121,8 @@ def main():
             #intensity_clean = df[selected_sample][::-1][mask]
 
             if not aligned_data.empty:
+                sliced_binding_energy = aligned_data['Binding Energy']
+                intensity_clean = aligned_data[selected_sample]
                 # Plot the selected range
                 fig = go.FigureWidget()
                 fig.add_trace(go.Scatter(x=aligned_data['Binding Energy'], y=aligned_data[selected_sample], mode='lines', name='Selected Range'))
