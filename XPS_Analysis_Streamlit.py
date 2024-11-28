@@ -493,12 +493,13 @@ def main():
                     family=font_family,
                     size=font_size
                 ),
-                showlegend=False  # Hide the legend for clarity in grid view
+                showlegend=False,  # Hide the legend for clarity in grid view
+                height=rows * 300,  # Adjust height based on number of rows
+                width=900,  # Adjust width for better visibility
             )
 
             # Display the grid of subplots
             st.plotly_chart(fig)
-
 
 if __name__ == "__main__":
     main()
