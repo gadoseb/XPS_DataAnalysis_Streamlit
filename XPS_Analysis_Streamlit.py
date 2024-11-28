@@ -45,6 +45,8 @@ def add_header_to_xlsx(file_path, sheet_name):
         new_header = ['Binding Energy'] + [f'Sample {i}' for i in range(1, total_columns)]
         df.columns = new_header
     
+    df.columns.values[0] = 'Binding Energy'
+    
     # Convert all data to numeric, coercing errors to NaN
     df = df.apply(pd.to_numeric, errors='coerce')
     
