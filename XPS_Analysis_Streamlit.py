@@ -110,7 +110,7 @@ def main():
                 st.warning("Start of range must be greater than the end (binding energy axis is reversed).")
             else:
                 mask = (binding_energy >= end_range) & (binding_energy <= start_range)
-                sliced_binding_energy = binding_energy[mask]
+                sliced_binding_energy = binding_energy[mask].dropna()
                 intensity_clean = df[selected_sample][::-1][mask]
 
             #mask = (binding_energy >= selected_range[0]) & (binding_energy <= selected_range[1])
