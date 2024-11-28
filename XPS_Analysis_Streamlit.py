@@ -67,7 +67,7 @@ def main():
         option = st.sidebar.selectbox("Choose an analysis type", ["Individual Sample Analysis", "Overlay of All Samples"])
 
         if option == "Individual Sample Analysis":
-            sample_columns = [col for col in df.columns if 'Sample' in col]
+            sample_columns = [col for col in df.columns if 'Sample' in col or 'Cycle' in col] # Edit here in case of different headerds
             selected_sample = st.selectbox("Select a sample column for Gaussian fitting", sample_columns)
 
             # Plot original data
