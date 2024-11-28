@@ -28,11 +28,26 @@ def combined_model(x, *params):
 
 # Function to add header to uploaded Excel file
 def add_header_to_xlsx(file_path, sheet_name):
+    # Load the sheet without a header
     df = pd.read_excel(file_path, sheet_name=sheet_name, header=None)
-    total_columns = df.shape[1]
-    new_header = ['Binding Energy'] + ['Sample {}'.format(i) for i in range(total_columns - 1)]
-    df.columns = new_header
+
+    # Check if the first row contains string values (indicating it could be a header)
+    first_row = df.iloc[0]
+    
+    if all(isinstance(val, str) for val in first_row):  # Check if all values in the first row are strings
+        # If the first row looks like a header, use the existing first row as the header
+        df.columns = first_row
+        df = df.drop(0)  # Drop the first row which is now the header
+    else:
+        # If the first row doesn't look like a header, assign custom headers
+        total_columns = df.shape[1]
+        # Assign 'Binding Energy' to the first column and 'Sample {i}' to the rest
+        new_header = ['Binding Energy'] + [f'Sample {i}' for i in range(1, total_columns)]
+        df.columns = new_header
+    
+    # Convert all data to numeric, coercing errors to NaN
     df = df.apply(pd.to_numeric, errors='coerce')
+    
     return df
 
 # Function to generate download link
