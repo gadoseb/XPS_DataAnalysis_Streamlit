@@ -425,5 +425,80 @@ def main():
             # Display the plot
             st.plotly_chart(fig)
 
+        elif option == "Grid View of All Samples":
+            st.subheader("Grid View of All Samples")
+
+            # Sidebar options for plot customization
+            st.sidebar.header("Plot Customization")
+
+            # Font options
+            font_family = st.sidebar.selectbox(
+                "Font Family",
+                ["Arial", "Courier New", "Helvetica", "Times New Roman", "Verdana"]
+            )
+            font_size = st.sidebar.slider("Font Size", 10, 24, 14)
+
+            # Grid options
+            show_grid = st.sidebar.checkbox("Show Grid", True)
+            grid_color = st.sidebar.color_picker("Grid Color", "#e6e6e6") if show_grid else None
+
+            # Axis titles
+            xaxis_title = st.sidebar.text_input("X-axis Title", "Binding Energy (eV)")
+            yaxis_title = st.sidebar.text_input("Y-axis Title", "Intensity (a.u.)")
+
+            # Initialize subplot grid layout
+            num_samples = len([col for col in df.columns if 'Sample' in col])
+            rows = (num_samples // 2) + (num_samples % 2)  # Assuming 2 columns for the grid
+
+            fig = make_subplots(
+                rows=rows, cols=2,  # Adjust this for the number of rows and columns
+                subplot_titles=[col for col in df.columns if 'Sample' in col],
+                vertical_spacing=0.1
+            )
+
+            # Customize each subplot
+            for i, col in enumerate(df.columns):
+                if 'Sample' in col:
+                    row = (i // 2) + 1  # Row index
+                    col_index = (i % 2) + 1  # Column index
+
+                    # Get the intensity and binding energy
+                    intensity = df[col].dropna()[::-1]
+
+                    # Add trace to the appropriate subplot
+                    fig.add_trace(
+                        go.Scatter(
+                            x=binding_energy.loc[intensity.index],
+                            y=intensity,
+                            mode='lines',
+                            name=col
+                        ),
+                        row=row, col=col_index
+                    )
+
+            # Update layout for global font and grid settings
+            fig.update_layout(
+                xaxis=dict(
+                    title=xaxis_title,
+                    autorange='reversed',
+                    showgrid=show_grid,
+                    gridcolor=grid_color
+                ),
+                yaxis=dict(
+                    title=yaxis_title,
+                    showgrid=show_grid,
+                    gridcolor=grid_color
+                ),
+                font=dict(
+                    family=font_family,
+                    size=font_size
+                ),
+                showlegend=False  # Hide the legend for clarity in grid view
+            )
+
+            # Display the grid of subplots
+            st.plotly_chart(fig)
+
+
 if __name__ == "__main__":
     main()
