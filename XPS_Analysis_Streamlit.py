@@ -132,8 +132,8 @@ def main():
                 num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
                 # Numerical inputs for peak parameters
-                st.sidebar.subheader("Select Multiple Peaks for Fitting")
-                num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
+                #st.sidebar.subheader("Select Multiple Peaks for Fitting")
+                #num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
                 #peak_parameters = []
                 #for i in range(num_peaks):
