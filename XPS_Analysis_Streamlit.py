@@ -81,7 +81,7 @@ def main():
 
         # Option selector for analysis type
         st.sidebar.header("XPS Analysis")
-        option = st.sidebar.selectbox("Choose an analysis type", ["Individual Sample Analysis", "Overlay of All Samples"])
+        option = st.sidebar.selectbox("Choose an analysis type", ["Individual Sample Analysis", "Overlay of All Samples", "Grid View of All Samples"])
 
         if option == "Individual Sample Analysis":
             sample_columns = [col for col in df.columns if 'Sample' in col or 'Cycle' in col] # Edit here in case of different headerds
