@@ -89,7 +89,7 @@ def main():
 
             # Plot original data
             fig = go.FigureWidget()
-            fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample][::-1], mode='lines', name='Original Data'))
+            fig.add_trace(go.Scatter(x=binding_energy, y=df[selected_sample][::-1].dropna(), mode='lines', name='Original Data'))
             fig.update_layout(
                 xaxis=dict(title='Binding Energy (eV)', autorange='reversed'),
                 yaxis_title='Intensity (a.u.)'
