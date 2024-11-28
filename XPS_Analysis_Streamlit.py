@@ -138,7 +138,7 @@ def main():
                 peak_parameters = []
                 for i in range(num_peaks):
                     st.sidebar.write(f"Select range and center for Peak {i+1}")
-                    peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[1], selected_range[0], (selected_range[0], selected_range[1]))
+                    peak_range = st.sidebar.slider(f"Select peak range {i+1}", end_range, start_range, (start_range, end_range))
                     peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
                     peak_parameters.append((peak_range, peak_center))
 
