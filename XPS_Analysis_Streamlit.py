@@ -135,20 +135,20 @@ def main():
                 #st.sidebar.subheader("Select Multiple Peaks for Fitting")
                 #num_peaks = st.sidebar.number_input("Number of peaks to fit", min_value=1, max_value=10, value=1)
 
-                #peak_parameters = []
-                #for i in range(num_peaks):
-                    #st.sidebar.write(f"Select range and center for Peak {i+1}")
-                    #peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[1], selected_range[0], (selected_range[0], selected_range[1]))
-                    #peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
-                    #peak_parameters.append((peak_range, peak_center))
-
                 peak_parameters = []
                 for i in range(num_peaks):
-                    st.sidebar.write(f"Parameters for Peak {i + 1}")
-                    peak_center = st.sidebar.number_input(f"Center value for Peak {i + 1}", value=float(np.mean([start_range, end_range])), step=0.1)
-                    peak_amplitude = st.sidebar.number_input(f"Amplitude for Peak {i + 1}", value=1.0, step=0.1)
-                    peak_width = st.sidebar.number_input(f"Width for Peak {i + 1}", value=1.0, step=0.1)
-                    peak_parameters.append((peak_amplitude, peak_center, peak_width))
+                    st.sidebar.write(f"Select range and center for Peak {i+1}")
+                    peak_range = st.sidebar.slider(f"Select peak range {i+1}", selected_range[1], selected_range[0], (selected_range[0], selected_range[1]))
+                    peak_center = st.sidebar.number_input(f"Input center value for Peak {i+1}", value=float(np.mean(peak_range)))
+                    peak_parameters.append((peak_range, peak_center))
+
+                #peak_parameters = []
+                #for i in range(num_peaks):
+                    #st.sidebar.write(f"Parameters for Peak {i + 1}")
+                    #peak_center = st.sidebar.number_input(f"Center value for Peak {i + 1}", value=float(np.mean([start_range, end_range])), step=0.1)
+                    #peak_amplitude = st.sidebar.number_input(f"Amplitude for Peak {i + 1}", value=1.0, step=0.1)
+                    #peak_width = st.sidebar.number_input(f"Width for Peak {i + 1}", value=1.0, step=0.1)
+                    #peak_parameters.append((peak_amplitude, peak_center, peak_width))
 
                 # Fit multiple Gaussians button
                 if st.sidebar.button("Fit Multiple Gaussians"):
