@@ -394,10 +394,10 @@ def main():
                         line_dash = st.selectbox(f"{new_sample_name} Line Style", ["solid", "dash", "dot", "dashdot"], index=0)
 
                     # Add trace with specific customizations
-                    intensity = df[col].dropna()[::-1]
+                    intensity = df[col][::-1]
                     fig.add_trace(go.Scatter(
                         x=binding_energy.loc[intensity.index],
-                        y=intensity_clean,
+                        y=intensity,
                         mode='lines',
                         name=new_sample_name,  # Use the modified name here
                         line=dict(color=line_color, width=line_width, dash=line_dash)
