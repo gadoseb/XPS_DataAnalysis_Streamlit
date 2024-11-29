@@ -397,7 +397,7 @@ def main():
                     intensity = df[col].dropna()[::-1]
                     fig.add_trace(go.Scatter(
                         x=binding_energy.loc[intensity.index],
-                        y=intensity,
+                        y=intensity_clean,
                         mode='lines',
                         name=new_sample_name,  # Use the modified name here
                         line=dict(color=line_color, width=line_width, dash=line_dash)
